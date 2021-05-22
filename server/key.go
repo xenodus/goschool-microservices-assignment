@@ -2,6 +2,7 @@ package main
 
 import (
 	"crypto/rand"
+	"database/sql"
 	"encoding/hex"
 	"errors"
 	"net/http"
@@ -9,10 +10,36 @@ import (
 	_ "github.com/go-sql-driver/mysql"
 )
 
-type Apikey struct {
-	Id     string
+type ApiKey struct {
+	Id     int
 	Value  string
 	Status string
+}
+
+func getKeyById(Id int) (*ApiKey, error) {
+	var k ApiKey
+	err := myDb.QueryRow("SELECT * FROM apikey WHERE Id = ? LIMIT 1", Id).Scan(&k.Id, &k.Value, &k.Status)
+	switch {
+	case err == sql.ErrNoRows:
+		return nil, errKeyNotFound
+	case err != nil:
+		return nil, err
+	default:
+		return &k, nil
+	}
+}
+
+func getKeyByValue(key string) (*ApiKey, error) {
+	var k ApiKey
+	err := myDb.QueryRow("SELECT * FROM apikey WHERE Value = ? LIMIT 1", key).Scan(&k.Id, &k.Value, &k.Status)
+	switch {
+	case err == sql.ErrNoRows:
+		return nil, errKeyNotFound
+	case err != nil:
+		return nil, err
+	default:
+		return &k, nil
+	}
 }
 
 func isKeyValid(req *http.Request) bool {
@@ -20,7 +47,7 @@ func isKeyValid(req *http.Request) bool {
 	key := req.FormValue("apiKey")
 
 	if key != "" {
-		var k Apikey
+		var k ApiKey
 		err := myDb.QueryRow("SELECT * FROM apikey WHERE Value = ? AND status = 'active' LIMIT 1", key).Scan(&k.Id, &k.Value, &k.Status)
 
 		switch {

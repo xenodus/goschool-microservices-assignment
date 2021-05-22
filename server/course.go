@@ -10,13 +10,13 @@ import (
 )
 
 type Course struct {
-	Id          string `json:"Courseid"`
+	Id          string `json:"CourseId"`
 	Title       string `json:"Title"`
 	Description string `json:"Description"`
 	Status      string `json:"Status"`
 }
 
-func (c *Course) createCourse() error {
+func (c *Course) create() error {
 
 	results, err := myDb.Exec("INSERT INTO course VALUES (?,?,?,?)", c.Id, c.Title, c.Description, c.Status)
 
@@ -83,7 +83,7 @@ func getCourses(status string) ([]*Course, error) {
 	return courses, nil
 }
 
-func (c *Course) deleteCourse() error {
+func (c *Course) delete() error {
 	results, err := myDb.Exec("DELETE FROM course WHERE ID=?", c.Id)
 
 	if err != nil {
@@ -99,8 +99,8 @@ func (c *Course) deleteCourse() error {
 	return errors.New("unable to delete course")
 }
 
-func (c *Course) updateCourse() error {
-	results, err := myDb.Exec("UPDATE course SET Title=?, Description=?, Status=? WHERE Id=?", c.Title, c.Description, c.Status, c.Id)
+func (c *Course) update(newCourse *Course) error {
+	results, err := myDb.Exec("UPDATE course SET Id=?, Title=?, Description=?, Status=? WHERE Id=?", newCourse.Id, newCourse.Title, newCourse.Description, newCourse.Status, c.Id)
 
 	if err != nil {
 		return err

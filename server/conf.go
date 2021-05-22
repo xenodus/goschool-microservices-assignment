@@ -13,7 +13,7 @@ const resetApp = true
 const serverHostname = "localhost"
 const serverPort = "8080"
 
-// api key
+// api key - keep value <= 50
 const keyLength = 50
 
 // db settings
@@ -25,8 +25,6 @@ var (
 	dbDatabase   string
 	dbConnection string
 )
-
-var adminKey string
 
 func init() {
 	err := godotenv.Load()
@@ -40,8 +38,5 @@ func init() {
 		dbDatabase = os.Getenv("MYSQL_DATABASE")
 
 		dbConnection = dbUsername + ":" + dbPassword + "@tcp(" + dbHostname + ":" + dbPort + ")/" + dbDatabase
-
-		// not secured way of protecting apikey crud just for assignment purpose
-		adminKey = os.Getenv("ADMIN_KEY")
 	}
 }

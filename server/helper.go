@@ -7,6 +7,9 @@ import (
 	"log"
 	"os"
 	"strings"
+
+	uuid "github.com/satori/go.uuid"
+	"golang.org/x/crypto/bcrypt"
 )
 
 // drop and create tables
@@ -23,13 +26,25 @@ func setupDb() {
 		Status ENUM('inactive', 'active') NOT NULL
 	  ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4`)
 
+	// User
+	myDb.Query("DROP TABLE user")
+	myDb.Query(`CREATE TABLE user (
+		Id varchar(128) NOT NULL PRIMARY KEY,
+		Email varchar(128) NOT NULL,
+		Password varchar(255) NOT NULL,
+		Admin tinyint(1) NOT NULL DEFAULT '0',
+		ApiKeyId char(11)
+	  ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4`)
+	myDb.Query("ALTER TABLE `user` ADD UNIQUE( `ApiKeyId`)")
+	myDb.Query("ALTER TABLE `user` ADD UNIQUE( `Email`)")
+
 	// API Key
 	myDb.Query("DROP TABLE apikey")
 	myDb.Query(`CREATE TABLE apikey (
-		Id int(11) PRIMARY KEY AUTO_INCREMENT,
-		Value varchar(128) NOT NULL,
-		Status ENUM('inactive', 'active') NOT NULL
-		) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4`)
+			Id int(11) PRIMARY KEY AUTO_INCREMENT,
+			Value varchar(128) NOT NULL,
+			Status ENUM('inactive', 'active') NOT NULL
+			) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4`)
 	myDb.Query("ALTER TABLE `apikey` ADD UNIQUE( `Value`)")
 
 	// End DB setup
@@ -55,23 +70,34 @@ func seedData() {
 	}
 
 	for _, v := range courses {
-		v.createCourse()
+		v.create()
 		fmt.Println("Created course:", v)
 	}
 
 	fmt.Println("End seeding Course")
 
-	fmt.Println("Start seeding api keys")
-	for keys2generate := 0; keys2generate < 2; keys2generate++ {
-		k, e := generateKey()
+	fmt.Println("Start seeding test admin users")
+	emails := []string{
+		"xenodus@gmail.com",
+		"contact@alvinyeoh.com",
+		"test@test.com",
+	}
 
-		if e != nil {
-			fmt.Println(e.Error())
-		} else {
-			fmt.Println("Generated key:", k)
+	for _, email := range emails {
+
+		userid := uuid.Must(uuid.NewV4()).String()
+		bPassword, _ := bcrypt.GenerateFromPassword([]byte("12345678"), bcrypt.MinCost)
+
+		u := User{userid, email, string(bPassword), -1, 1}
+		u.register()
+		k, e := u.getKey()
+
+		if e == nil {
+			fmt.Println("Created User:", u.Email, "ApiKey:", k.Value)
 		}
 	}
-	fmt.Println("End seeding api keys")
+
+	fmt.Println("End seeding users")
 }
 
 func doLog(logType, msg string) {
