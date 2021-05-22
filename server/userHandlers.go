@@ -139,7 +139,7 @@ func invalidateKeyHandler(res http.ResponseWriter, req *http.Request) {
 
 			res.Header().Set("Content-Type", "application/json")
 			res.WriteHeader(http.StatusUnprocessableEntity)
-			json.NewEncoder(res).Encode(JSONResponse{"error", http.StatusUnprocessableEntity, "api key provided is invalid"})
+			json.NewEncoder(res).Encode(JSONResponse{"error", http.StatusUnprocessableEntity, "api key provided to invalidate is invalid"})
 			return
 		}
 	}
