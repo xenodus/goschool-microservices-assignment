@@ -32,8 +32,8 @@ func setupDb() {
 		Id varchar(128) NOT NULL PRIMARY KEY,
 		Email varchar(128) NOT NULL,
 		Password varchar(255) NOT NULL,
-		Admin tinyint(1) NOT NULL DEFAULT '0',
-		ApiKeyId char(11)
+		ApiKeyId char(11),
+		Admin tinyint(1) NOT NULL DEFAULT '0'
 	  ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4`)
 	myDb.Query("ALTER TABLE `user` ADD UNIQUE( `ApiKeyId`)")
 	myDb.Query("ALTER TABLE `user` ADD UNIQUE( `Email`)")
@@ -89,7 +89,11 @@ func seedData() {
 		bPassword, _ := bcrypt.GenerateFromPassword([]byte("12345678"), bcrypt.MinCost)
 
 		u := User{userid, email, string(bPassword), -1, 1}
-		u.register()
+
+		fmt.Println(u)
+		err := u.register()
+		fmt.Println(err)
+
 		k, e := u.getKey()
 
 		if e == nil {

@@ -21,7 +21,7 @@ type UserAuth struct {
 }
 
 func (u *User) register() error {
-	results, err := myDb.Exec("INSERT INTO user VALUES (?,?,?,?,?)", u.Id, u.Email, u.Password, "NULL", 0)
+	results, err := myDb.Exec("INSERT INTO user VALUES (?,?,?,?,?)", u.Id, u.Email, u.Password, 0, 0)
 
 	if err != nil {
 		return err
