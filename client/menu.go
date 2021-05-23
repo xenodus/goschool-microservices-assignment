@@ -131,11 +131,11 @@ func postLoginMenu() {
 	case 7:
 		deleteCoursePrompt() // delete course
 	case 8:
-		fmt.Println("API Key:", apiKey)
+		printKey() // print current active key to console
 	case 9:
-		invalidateKey()
+		invalidateKey() // invalidate key, set key to inactive status
 	default:
-		logout()
+		logout() // reset local apikey
 	}
 }
 

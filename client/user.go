@@ -9,12 +9,6 @@ import (
 	"regexp"
 )
 
-var apiKey string = ""
-
-func logout() {
-	apiKey = ""
-}
-
 type User struct {
 	Email    string `json:"Email"`
 	Password string `json:"Password"`
