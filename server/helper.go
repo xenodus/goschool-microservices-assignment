@@ -87,13 +87,9 @@ func seedData() {
 
 		userid := uuid.Must(uuid.NewV4()).String()
 		bPassword, _ := bcrypt.GenerateFromPassword([]byte("12345678"), bcrypt.MinCost)
-
 		u := User{userid, email, string(bPassword), -1, 1}
 
-		fmt.Println(u)
-		err := u.register()
-		fmt.Println(err)
-
+		u.register()
 		k, e := u.getKey()
 
 		if e == nil {
