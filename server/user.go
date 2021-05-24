@@ -120,7 +120,8 @@ func (u *UserAuth) validateFields() error {
 
 func (u *UserAuth) fieldsCheck() error {
 
-	if strings.TrimSpace(u.Email) == "" || strings.TrimSpace(u.Password) == "" {
+	// space for password is acceptable character
+	if strings.TrimSpace(u.Email) == "" || u.Password == "" {
 		return errInvalidUserInfo
 	}
 

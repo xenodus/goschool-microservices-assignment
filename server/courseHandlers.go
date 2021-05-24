@@ -46,7 +46,7 @@ func createCourseHandler(res http.ResponseWriter, req *http.Request) {
 			if cErr == errCourseNotFound {
 				doLog("INFO", req.RemoteAddr+" | Created course: "+newCourse.Id)
 				newCourse.create()
-				printJSONResponse(res, JSONResponse{"ok", http.StatusCreated, "Course created, " + newCourse.Id})
+				printJSONResponse(res, JSONResponse{"ok", http.StatusCreated, "course created"})
 				return
 			} else {
 				doLog("ERROR", err.Error())
@@ -156,7 +156,7 @@ func deleteCourseHandler(res http.ResponseWriter, req *http.Request) {
 		if course != nil {
 			doLog("INFO", req.RemoteAddr+" | Deleted course: "+course.Id)
 			course.delete()
-			printJSONResponse(res, JSONResponse{"ok", http.StatusOK, "Course deleted"})
+			printJSONResponse(res, JSONResponse{"ok", http.StatusOK, "course deleted"})
 			return
 		}
 	}

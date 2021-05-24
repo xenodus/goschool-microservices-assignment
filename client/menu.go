@@ -174,7 +174,10 @@ func newCourseInfoPrompt() *Course {
 
 	for courseId == "" {
 		fmt.Println("Enter course ID (0 to abort):")
-		fmt.Scanln(&courseId)
+		scanner := bufio.NewScanner(os.Stdin)
+		if scanner.Scan() {
+			courseId = strings.TrimSpace(scanner.Text())
+		}
 	}
 
 	if courseId == "0" {
@@ -183,7 +186,10 @@ func newCourseInfoPrompt() *Course {
 
 	for title == "" {
 		fmt.Println("Enter course title (0 to abort):")
-		fmt.Scanln(&title)
+		scanner := bufio.NewScanner(os.Stdin)
+		if scanner.Scan() {
+			title = strings.TrimSpace(scanner.Text())
+		}
 	}
 
 	if title == "0" {
@@ -192,7 +198,10 @@ func newCourseInfoPrompt() *Course {
 
 	for description == "" {
 		fmt.Println("Enter course description (0 to abort):")
-		fmt.Scanln(&description)
+		scanner := bufio.NewScanner(os.Stdin)
+		if scanner.Scan() {
+			description = strings.TrimSpace(scanner.Text())
+		}
 	}
 
 	if description == "0" {
@@ -203,7 +212,10 @@ func newCourseInfoPrompt() *Course {
 		fmt.Println("Enter course status (0 to abort):")
 		fmt.Println("1. Active")
 		fmt.Println("2. Inactive")
-		fmt.Scanln(&status)
+		scanner := bufio.NewScanner(os.Stdin)
+		if scanner.Scan() {
+			status = strings.TrimSpace(scanner.Text())
+		}
 	}
 
 	if status == "0" {
@@ -233,7 +245,10 @@ func updateCourseInfoPrompt() (string, *Course) {
 
 	for currentCourseId == "" {
 		fmt.Println("Enter the course ID you would like to update (0 to abort):")
-		fmt.Scanln(&currentCourseId)
+		scanner := bufio.NewScanner(os.Stdin)
+		if scanner.Scan() {
+			currentCourseId = strings.TrimSpace(scanner.Text())
+		}
 	}
 
 	if currentCourseId == "0" {
@@ -242,7 +257,10 @@ func updateCourseInfoPrompt() (string, *Course) {
 
 	for courseId == "" {
 		fmt.Println("Enter the new course ID (0 to abort):")
-		fmt.Scanln(&courseId)
+		scanner := bufio.NewScanner(os.Stdin)
+		if scanner.Scan() {
+			courseId = strings.TrimSpace(scanner.Text())
+		}
 	}
 
 	if courseId == "0" {
@@ -251,7 +269,10 @@ func updateCourseInfoPrompt() (string, *Course) {
 
 	for title == "" {
 		fmt.Println("Enter the new course title (0 to abort):")
-		fmt.Scanln(&title)
+		scanner := bufio.NewScanner(os.Stdin)
+		if scanner.Scan() {
+			title = strings.TrimSpace(scanner.Text())
+		}
 	}
 
 	if title == "0" {
@@ -260,7 +281,10 @@ func updateCourseInfoPrompt() (string, *Course) {
 
 	for description == "" {
 		fmt.Println("Enter the new course description (0 to abort):")
-		fmt.Scanln(&description)
+		scanner := bufio.NewScanner(os.Stdin)
+		if scanner.Scan() {
+			description = strings.TrimSpace(scanner.Text())
+		}
 	}
 
 	if description == "0" {
@@ -271,7 +295,10 @@ func updateCourseInfoPrompt() (string, *Course) {
 		fmt.Println("Enter the new course status (0 to abort):")
 		fmt.Println("1. Active")
 		fmt.Println("2. Inactive")
-		fmt.Scanln(&status)
+		scanner := bufio.NewScanner(os.Stdin)
+		if scanner.Scan() {
+			status = strings.TrimSpace(scanner.Text())
+		}
 	}
 
 	if status == "0" {
@@ -317,9 +344,11 @@ func register() {
 
 	for password == "" {
 		fmt.Println("Enter a password (0 to abort):")
-		inputReader := bufio.NewReader(os.Stdin)
-		input, _ := inputReader.ReadString('\n')
-		password = strings.TrimRight(input, "\r\n")
+
+		scanner := bufio.NewScanner(os.Stdin)
+		if scanner.Scan() {
+			password = scanner.Text()
+		}
 
 		if password == "0" {
 			return
