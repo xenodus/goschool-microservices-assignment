@@ -45,8 +45,22 @@ func registerHandler(res http.ResponseWriter, req *http.Request) {
 				bPassword, _ := bcrypt.GenerateFromPassword([]byte(userRegistration.Password), bcrypt.MinCost)
 
 				u := User{userid, userRegistration.Email, string(bPassword), -1, 0}
-				u.register()
-				k, _ := u.getKey()
+
+				regErr := u.register()
+				if regErr != nil {
+					doLog("ERROR", regErr.Error())
+					printJSONResponse(res, JSONResponse{"error", http.StatusInternalServerError, regErr.Error()})
+					return
+				}
+
+				k, kErr := u.getKey()
+
+				if kErr != nil {
+					doLog("ERROR", kErr.Error())
+					printJSONResponse(res, JSONResponse{"error", http.StatusInternalServerError, kErr.Error()})
+					return
+				}
+
 				doLog("INFO", req.RemoteAddr+" | Created user: "+u.Id)
 
 				res.Header().Set("Content-Type", "application/json")
@@ -54,10 +68,8 @@ func registerHandler(res http.ResponseWriter, req *http.Request) {
 				json.NewEncoder(res).Encode(ApiKeyResponse{"ok", http.StatusCreated, k.Value, k.Status})
 				return
 			} else {
-				doLog("ERROR", err.Error())
-
-				res.WriteHeader(http.StatusInternalServerError)
-				res.Write([]byte(errInternalServerError.Error()))
+				doLog("ERROR", uErr.Error())
+				printJSONResponse(res, JSONResponse{"error", http.StatusInternalServerError, errInternalServerError.Error()})
 				return
 			}
 		}
@@ -103,12 +115,14 @@ func invalidateKeyHandler(res http.ResponseWriter, req *http.Request) {
 			err := bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(authUser.Password))
 
 			if err != nil {
+				doLog("WARNING", req.RemoteAddr+" | Failed authentication: "+authUser.Email)
 				printJSONResponse(res, JSONResponse{"error", http.StatusUnauthorized, errAuthFailure.Error()})
 				return
 			}
 
 			// check if user is an admin
 			if user.Admin == 0 {
+				doLog("WARNING", req.RemoteAddr+" | No permission: "+authUser.Email)
 				printJSONResponse(res, JSONResponse{"error", http.StatusForbidden, errNoPermission.Error()})
 				return
 			}

@@ -49,9 +49,8 @@ func createCourseHandler(res http.ResponseWriter, req *http.Request) {
 				printJSONResponse(res, JSONResponse{"ok", http.StatusCreated, "course created"})
 				return
 			} else {
-				doLog("ERROR", err.Error())
-				res.WriteHeader(http.StatusInternalServerError)
-				res.Write([]byte(errInternalServerError.Error()))
+				doLog("ERROR", cErr.Error())
+				printJSONResponse(res, JSONResponse{"error", http.StatusInternalServerError, errInternalServerError.Error()})
 				return
 			}
 		}
