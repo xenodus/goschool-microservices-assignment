@@ -14,8 +14,11 @@ import (
 
 // drop and create tables
 func setupDb() {
-	// Start  DB setup
-	fmt.Println("Start DB setup")
+
+	fmt.Println("> resetApp is set to TRUE in conf.go. Proceeding to reset database.")
+
+	// Start DB setup
+	fmt.Println("Step 1 of 3: Setting up database")
 
 	// Course
 	myDb.Query("DROP TABLE course")
@@ -47,15 +50,14 @@ func setupDb() {
 			) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4`)
 	myDb.Query("ALTER TABLE `apikey` ADD UNIQUE( `Value`)")
 
-	// End DB setup
-	fmt.Println("Finished DB setup")
-
 	seedData()
+
+	fmt.Println("Finished resetting app!")
 }
 
 // seed test data
 func seedData() {
-	fmt.Println("Start seeding Course")
+	fmt.Println("Step 2 of 3: Start seeding courses")
 
 	courses := []Course{
 		Course{
@@ -74,9 +76,9 @@ func seedData() {
 		fmt.Println("Created course:", v)
 	}
 
-	fmt.Println("End seeding Course")
+	fmt.Println("End seeding courses")
 
-	fmt.Println("Start seeding test admin users")
+	fmt.Println("Step 3 of 3: Start seeding admin users")
 	emails := []string{
 		"xenodus@gmail.com",
 		"contact@alvinyeoh.com",

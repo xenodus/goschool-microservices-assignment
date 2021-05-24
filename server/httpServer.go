@@ -31,7 +31,7 @@ func startWebServer() {
 	// invalidate an api key
 	router.HandleFunc("/api/v1/keys/{apiKey}", invalidateKeyHandler).Methods("DELETE")
 
-	fmt.Println("Listening at port 8080")
+	fmt.Println("Listening at http://" + serverHostname + ":" + serverPort)
 
 	err := http.ListenAndServe(serverHostname+":"+serverPort, router)
 	if err != nil {
