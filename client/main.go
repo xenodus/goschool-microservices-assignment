@@ -1,10 +1,8 @@
 package main
 
-import "fmt"
-
 func main() {
 
-	fmt.Println("Welcome to GoSchool REST client")
+	printHeader()
 	for {
 		menu()
 	}

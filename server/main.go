@@ -21,5 +21,6 @@ func main() {
 		setupDb()
 	}
 
+	printHeader()
 	startWebServer()
 }
