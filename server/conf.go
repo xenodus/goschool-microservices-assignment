@@ -10,7 +10,6 @@ import (
 const resetApp = true
 
 // rest api server settings
-const serverHostname = "localhost"
 const serverPort = "8080"
 
 // api key - keep value <= 50
