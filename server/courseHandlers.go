@@ -12,9 +12,7 @@ import (
 func createCourseHandler(res http.ResponseWriter, req *http.Request) {
 
 	if !isKeyValid(req) {
-		res.Header().Set("Content-Type", "application/json")
-		res.WriteHeader(http.StatusUnauthorized)
-		json.NewEncoder(res).Encode(JSONResponse{"error", http.StatusUnauthorized, errInvalidApiKey.Error()})
+		handleKeyInvalid(res)
 		return
 	}
 
@@ -76,9 +74,7 @@ func createCourseHandler(res http.ResponseWriter, req *http.Request) {
 func updateCourseHandler(res http.ResponseWriter, req *http.Request) {
 
 	if !isKeyValid(req) {
-		res.Header().Set("Content-Type", "application/json")
-		res.WriteHeader(http.StatusUnauthorized)
-		json.NewEncoder(res).Encode(JSONResponse{"error", http.StatusUnauthorized, errInvalidApiKey.Error()})
+		handleKeyInvalid(res)
 		return
 	}
 
@@ -159,9 +155,7 @@ func updateCourseHandler(res http.ResponseWriter, req *http.Request) {
 func deleteCourseHandler(res http.ResponseWriter, req *http.Request) {
 
 	if !isKeyValid(req) {
-		res.Header().Set("Content-Type", "application/json")
-		res.WriteHeader(http.StatusUnauthorized)
-		json.NewEncoder(res).Encode(JSONResponse{"error", http.StatusUnauthorized, errInvalidApiKey.Error()})
+		handleKeyInvalid(res)
 		return
 	}
 
@@ -199,9 +193,7 @@ func deleteCourseHandler(res http.ResponseWriter, req *http.Request) {
 func getCourseHandler(res http.ResponseWriter, req *http.Request) {
 
 	if !isKeyValid(req) {
-		res.Header().Set("Content-Type", "application/json")
-		res.WriteHeader(http.StatusUnauthorized)
-		json.NewEncoder(res).Encode(JSONResponse{"error", http.StatusUnauthorized, errInvalidApiKey.Error()})
+		handleKeyInvalid(res)
 		return
 	}
 
@@ -225,9 +217,7 @@ func getCourseHandler(res http.ResponseWriter, req *http.Request) {
 		}
 	}
 
-	res.Header().Set("Content-Type", "application/json")
-	res.WriteHeader(http.StatusNotFound)
-	json.NewEncoder(res).Encode(JSONResponse{"error", http.StatusNotFound, errCourseNotFound.Error()})
+	printJSONResponse(res, JSONResponse{"error", http.StatusNotFound, errCourseNotFound.Error()})
 }
 
 // getCoursesHandler is for getting all courses by status type via GET requests
@@ -235,9 +225,7 @@ func getCoursesHandler(status string) http.HandlerFunc {
 	return func(res http.ResponseWriter, req *http.Request) {
 
 		if !isKeyValid(req) {
-			res.Header().Set("Content-Type", "application/json")
-			res.WriteHeader(http.StatusUnauthorized)
-			json.NewEncoder(res).Encode(JSONResponse{"error", http.StatusUnauthorized, errInvalidApiKey.Error()})
+			handleKeyInvalid(res)
 			return
 		}
 

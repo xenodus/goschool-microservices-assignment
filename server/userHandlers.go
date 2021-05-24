@@ -75,9 +75,7 @@ func registerHandler(res http.ResponseWriter, req *http.Request) {
 func invalidateKeyHandler(res http.ResponseWriter, req *http.Request) {
 
 	if !isKeyValid(req) {
-		res.Header().Set("Content-Type", "application/json")
-		res.WriteHeader(http.StatusUnauthorized)
-		json.NewEncoder(res).Encode(JSONResponse{"error", http.StatusUnauthorized, errInvalidApiKey.Error()})
+		handleKeyInvalid(res)
 		return
 	}
 

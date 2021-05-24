@@ -5,6 +5,8 @@ import (
 	"errors"
 	"strings"
 	"unicode/utf8"
+
+	_ "github.com/go-sql-driver/mysql"
 )
 
 type User struct {
@@ -50,7 +52,11 @@ func (u *User) setKey() error {
 		}
 
 		u.ApiKeyId = newKey.Id
-		u.update()
+		updateErr := u.update()
+
+		if updateErr != nil {
+			return updateErr
+		}
 	}
 
 	return nil

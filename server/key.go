@@ -61,6 +61,10 @@ func isKeyValid(req *http.Request) bool {
 	return false
 }
 
+func handleKeyInvalid(res http.ResponseWriter) {
+	printJSONResponse(res, JSONResponse{"error", http.StatusUnauthorized, errInvalidApiKey.Error()})
+}
+
 func generateKey() (string, error) {
 	b := make([]byte, keyLength)
 	if _, err := rand.Read(b); err != nil {
