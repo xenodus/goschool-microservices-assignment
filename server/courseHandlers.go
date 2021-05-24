@@ -29,9 +29,7 @@ func createCourseHandler(res http.ResponseWriter, req *http.Request) {
 			validateErr := newCourse.validateFields()
 
 			if validateErr != nil {
-				res.Header().Set("Content-Type", "application/json")
-				res.WriteHeader(http.StatusUnprocessableEntity)
-				json.NewEncoder(res).Encode(JSONResponse{"error", http.StatusUnprocessableEntity, validateErr.Error()})
+				printJSONResponse(res, JSONResponse{"error", http.StatusUnprocessableEntity, validateErr.Error()})
 				return
 			}
 
@@ -40,9 +38,7 @@ func createCourseHandler(res http.ResponseWriter, req *http.Request) {
 
 			// course exists
 			if cErr == nil {
-				res.Header().Set("Content-Type", "application/json")
-				res.WriteHeader(http.StatusConflict)
-				json.NewEncoder(res).Encode(JSONResponse{"error", http.StatusConflict, errDuplicateCourseId.Error()})
+				printJSONResponse(res, JSONResponse{"error", http.StatusConflict, errDuplicateCourseId.Error()})
 				return
 			}
 
@@ -50,14 +46,10 @@ func createCourseHandler(res http.ResponseWriter, req *http.Request) {
 			if cErr == errCourseNotFound {
 				doLog("INFO", req.RemoteAddr+" | Created course: "+newCourse.Id)
 				newCourse.create()
-
-				res.Header().Set("Content-Type", "application/json")
-				res.WriteHeader(http.StatusCreated)
-				json.NewEncoder(res).Encode(JSONResponse{"ok", http.StatusCreated, "Course created, " + newCourse.Id})
+				printJSONResponse(res, JSONResponse{"ok", http.StatusCreated, "Course created, " + newCourse.Id})
 				return
 			} else {
 				doLog("ERROR", err.Error())
-
 				res.WriteHeader(http.StatusInternalServerError)
 				res.Write([]byte(errInternalServerError.Error()))
 				return
@@ -65,9 +57,7 @@ func createCourseHandler(res http.ResponseWriter, req *http.Request) {
 		}
 	}
 
-	res.Header().Set("Content-Type", "application/json")
-	res.WriteHeader(http.StatusUnprocessableEntity)
-	json.NewEncoder(res).Encode(JSONResponse{"error", http.StatusUnprocessableEntity, errInvalidCourseInfo.Error()})
+	printJSONResponse(res, JSONResponse{"error", http.StatusUnprocessableEntity, errInvalidCourseInfo.Error()})
 }
 
 // updateCourseHandler is for creating OR editing courses via PUT requests
@@ -90,9 +80,7 @@ func updateCourseHandler(res http.ResponseWriter, req *http.Request) {
 			validateErr := newCourse.validateFields()
 
 			if validateErr != nil {
-				res.Header().Set("Content-Type", "application/json")
-				res.WriteHeader(http.StatusUnprocessableEntity)
-				json.NewEncoder(res).Encode(JSONResponse{"error", http.StatusUnprocessableEntity, validateErr.Error()})
+				printJSONResponse(res, JSONResponse{"error", http.StatusUnprocessableEntity, validateErr.Error()})
 				return
 			}
 		}
@@ -110,10 +98,7 @@ func updateCourseHandler(res http.ResponseWriter, req *http.Request) {
 					newCourse.Id = id
 					newCourse.create()
 					doLog("INFO", req.RemoteAddr+" | Created course: "+newCourse.Id)
-
-					res.Header().Set("Content-Type", "application/json")
-					res.WriteHeader(http.StatusCreated)
-					json.NewEncoder(res).Encode(JSONResponse{"ok", http.StatusCreated, "Course created, " + newCourse.Id})
+					printJSONResponse(res, JSONResponse{"ok", http.StatusCreated, "course created"})
 					return
 				} else {
 					doLog("ERROR", err.Error())
@@ -129,26 +114,20 @@ func updateCourseHandler(res http.ResponseWriter, req *http.Request) {
 
 					// exists
 					if err == nil {
-						res.Header().Set("Content-Type", "application/json")
-						res.WriteHeader(http.StatusConflict)
-						json.NewEncoder(res).Encode(JSONResponse{"error", http.StatusConflict, errDuplicateCourseId.Error()})
+						printJSONResponse(res, JSONResponse{"error", http.StatusConflict, errDuplicateCourseId.Error()})
 						return
 					}
 				}
 
 				course.update(&newCourse)
 				doLog("INFO", req.RemoteAddr+" | Updated course: "+course.Id)
-
-				res.Header().Set("Content-Type", "application/json")
-				json.NewEncoder(res).Encode(JSONResponse{"ok", http.StatusOK, "Course updated, " + course.Id})
+				printJSONResponse(res, JSONResponse{"ok", http.StatusOK, "course updated"})
 				return
 			}
 		}
 	}
 
-	res.Header().Set("Content-Type", "application/json")
-	res.WriteHeader(http.StatusUnprocessableEntity)
-	json.NewEncoder(res).Encode(JSONResponse{"error", http.StatusUnprocessableEntity, errInvalidCourseInfo.Error()})
+	printJSONResponse(res, JSONResponse{"error", http.StatusUnprocessableEntity, errInvalidCourseInfo.Error()})
 }
 
 // deleteCourseHandler is for deleting courses via DELETE requests
@@ -177,16 +156,12 @@ func deleteCourseHandler(res http.ResponseWriter, req *http.Request) {
 		if course != nil {
 			doLog("INFO", req.RemoteAddr+" | Deleted course: "+course.Id)
 			course.delete()
-
-			res.Header().Set("Content-Type", "application/json")
-			json.NewEncoder(res).Encode(JSONResponse{"ok", http.StatusOK, "Course deleted"})
+			printJSONResponse(res, JSONResponse{"ok", http.StatusOK, "Course deleted"})
 			return
 		}
 	}
 
-	res.Header().Set("Content-Type", "application/json")
-	res.WriteHeader(http.StatusNotFound)
-	json.NewEncoder(res).Encode(JSONResponse{"error", http.StatusNotFound, errCourseNotFound.Error()})
+	printJSONResponse(res, JSONResponse{"error", http.StatusNotFound, errCourseNotFound.Error()})
 }
 
 // getCourseHandler is for getting a course via GET requests

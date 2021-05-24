@@ -25,9 +25,7 @@ func registerHandler(res http.ResponseWriter, req *http.Request) {
 			validateErr := userRegistration.validateFields()
 
 			if validateErr != nil {
-				res.Header().Set("Content-Type", "application/json")
-				res.WriteHeader(http.StatusUnprocessableEntity)
-				json.NewEncoder(res).Encode(JSONResponse{"error", http.StatusUnprocessableEntity, validateErr.Error()})
+				printJSONResponse(res, JSONResponse{"error", http.StatusUnprocessableEntity, validateErr.Error()})
 				return
 			}
 
@@ -36,9 +34,7 @@ func registerHandler(res http.ResponseWriter, req *http.Request) {
 
 			// user (email) exists
 			if uErr == nil {
-				res.Header().Set("Content-Type", "application/json")
-				res.WriteHeader(http.StatusConflict)
-				json.NewEncoder(res).Encode(JSONResponse{"error", http.StatusConflict, errDuplicateUser.Error()})
+				printJSONResponse(res, JSONResponse{"error", http.StatusConflict, errDuplicateUser.Error()})
 				return
 			}
 
@@ -67,9 +63,7 @@ func registerHandler(res http.ResponseWriter, req *http.Request) {
 		}
 	}
 
-	res.Header().Set("Content-Type", "application/json")
-	res.WriteHeader(http.StatusUnprocessableEntity)
-	json.NewEncoder(res).Encode(JSONResponse{"error", http.StatusUnprocessableEntity, errInvalidUserInfo.Error()})
+	printJSONResponse(res, JSONResponse{"error", http.StatusUnprocessableEntity, errInvalidUserInfo.Error()})
 }
 
 func invalidateKeyHandler(res http.ResponseWriter, req *http.Request) {
@@ -92,9 +86,7 @@ func invalidateKeyHandler(res http.ResponseWriter, req *http.Request) {
 			validateErr := authUser.validateFields()
 
 			if validateErr != nil {
-				res.Header().Set("Content-Type", "application/json")
-				res.WriteHeader(http.StatusUnprocessableEntity)
-				json.NewEncoder(res).Encode(JSONResponse{"error", http.StatusUnprocessableEntity, validateErr.Error()})
+				printJSONResponse(res, JSONResponse{"error", http.StatusUnprocessableEntity, validateErr.Error()})
 				return
 			}
 
@@ -103,9 +95,7 @@ func invalidateKeyHandler(res http.ResponseWriter, req *http.Request) {
 
 			// user don't exists
 			if uErr != nil {
-				res.Header().Set("Content-Type", "application/json")
-				res.WriteHeader(http.StatusUnauthorized)
-				json.NewEncoder(res).Encode(JSONResponse{"error", http.StatusUnauthorized, errAuthFailure.Error()})
+				printJSONResponse(res, JSONResponse{"error", http.StatusUnauthorized, errAuthFailure.Error()})
 				return
 			}
 
@@ -113,17 +103,13 @@ func invalidateKeyHandler(res http.ResponseWriter, req *http.Request) {
 			err := bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(authUser.Password))
 
 			if err != nil {
-				res.Header().Set("Content-Type", "application/json")
-				res.WriteHeader(http.StatusUnauthorized)
-				json.NewEncoder(res).Encode(JSONResponse{"error", http.StatusUnauthorized, errAuthFailure.Error()})
+				printJSONResponse(res, JSONResponse{"error", http.StatusUnauthorized, errAuthFailure.Error()})
 				return
 			}
 
 			// check if user is an admin
 			if user.Admin == 0 {
-				res.Header().Set("Content-Type", "application/json")
-				res.WriteHeader(http.StatusForbidden)
-				json.NewEncoder(res).Encode(JSONResponse{"error", http.StatusForbidden, errNoPermission.Error()})
+				printJSONResponse(res, JSONResponse{"error", http.StatusForbidden, errNoPermission.Error()})
 				return
 			}
 
@@ -135,21 +121,15 @@ func invalidateKeyHandler(res http.ResponseWriter, req *http.Request) {
 
 				if err == nil {
 					doLog("INFO", req.RemoteAddr+" | Invalidated api key: "+apiKey)
-
-					res.Header().Set("Content-Type", "application/json")
-					json.NewEncoder(res).Encode(JSONResponse{"ok", http.StatusOK, "api key invalidated"})
+					printJSONResponse(res, JSONResponse{"ok", http.StatusOK, "api key invalidated"})
 					return
 				}
 			}
 
-			res.Header().Set("Content-Type", "application/json")
-			res.WriteHeader(http.StatusUnprocessableEntity)
-			json.NewEncoder(res).Encode(JSONResponse{"error", http.StatusUnprocessableEntity, "api key provided to invalidate is invalid"})
+			printJSONResponse(res, JSONResponse{"error", http.StatusUnprocessableEntity, errKeyInvalidateNotFound.Error()})
 			return
 		}
 	}
 
-	res.Header().Set("Content-Type", "application/json")
-	res.WriteHeader(http.StatusUnauthorized)
-	json.NewEncoder(res).Encode(JSONResponse{"error", http.StatusUnauthorized, errAuthFailure.Error()})
+	printJSONResponse(res, JSONResponse{"error", http.StatusUnauthorized, errAuthFailure.Error()})
 }

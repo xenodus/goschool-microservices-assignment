@@ -14,7 +14,8 @@ var (
 	errNoPermission    = errors.New("insufficient rights")
 
 	// Api Key
-	errKeyNotFound = errors.New("api key not found")
+	errKeyNotFound           = errors.New("api key not found")
+	errKeyInvalidateNotFound = errors.New("api key to invalidate not found")
 
 	// Course
 	errCourseNotFound      = errors.New("course not found")
