@@ -82,6 +82,7 @@ func (user *User) invalidateKey(key string) {
 	}
 }
 
+// validateEmail checks for length and format
 func validateEmail(email string) error {
 
 	if len(email) < emailMinLen || len(email) > emailMaxLen {
@@ -97,6 +98,7 @@ func validateEmail(email string) error {
 	return nil
 }
 
+// validatePassword checks for length
 func validatePassword(password string) error {
 	if len(password) < passwordMinLen || len(password) > passwordMaxLen {
 		return errAuthPasswordLength
